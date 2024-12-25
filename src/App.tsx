@@ -2,24 +2,12 @@ import './App.css'
 import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
 import { useState } from 'react'
-// Remove this import since we're using signOut from Authenticator context
-// import { signOut } from 'aws-amplify/auth'
 
 function App() {
   const [showAuth, setShowAuth] = useState(false)
 
   const handleGetStarted = () => {
     setShowAuth(true)
-  }
-
-  // Update the handleSignOut function to use the signOut from context
-  const handleSignOut = async (contextSignOut: () => void) => {
-    try {
-      await contextSignOut()
-      setShowAuth(false)
-    } catch (error) {
-      console.error('Error signing out:', error)
-    }
   }
 
   return (
@@ -39,9 +27,13 @@ function App() {
                       <a href="#features">Features</a>
                       <a href="#about">About</a>
                       <a href="#contact">Contact</a>
-                      {/* Update the onClick handler */}
                       <button 
-                        onClick={() => handleSignOut(signOut)} 
+                        onClick={() => {
+                          if (signOut) {
+                            signOut();
+                            setShowAuth(false);
+                          }
+                        }} 
                         className="sign-out-button"
                       >
                         Sign Out
