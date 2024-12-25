@@ -2,9 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
-import { configureAmplify } from './amplifyconfiguration.ts'
+import { Amplify } from 'aws-amplify'
+// Update the import to use .js extension
+import amplifyconfig from './amplifyconfiguration.ts'
 
-configureAmplify()
+Amplify.configure(amplifyconfig)
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

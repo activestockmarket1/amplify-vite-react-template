@@ -2,7 +2,8 @@ import './App.css'
 import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
 import { useState } from 'react'
-import { signOut } from 'aws-amplify/auth'
+// Remove this import since we're using signOut from Authenticator context
+// import { signOut } from 'aws-amplify/auth'
 
 function App() {
   const [showAuth, setShowAuth] = useState(false)
@@ -11,58 +12,50 @@ function App() {
     setShowAuth(true)
   }
 
-  const handleSignOut = async () => {
+  // Update the handleSignOut function to use the signOut from context
+  const handleSignOut = async (contextSignOut: () => void) => {
     try {
-      await signOut()
+      await contextSignOut()
       setShowAuth(false)
     } catch (error) {
       console.error('Error signing out:', error)
     }
   }
 
-  const formFields = {
-    signUp: {
-      email: {
-        order: 1
-      },
-      password: {
-        order: 2
-      },
-      confirm_password: {
-        order: 3
-      }
-    }
-  }
-
   return (
     <div className="app">
       {showAuth ? (
-        <Authenticator formFields={formFields}>
-          {({ signOut, user }) => (
-            <div className="authenticated-content">
-              <header className="header">
-                <nav>
-                  <div className="logo">
-                    <h1>StockHistory.Ai</h1>
-                  </div>
-                  <div className="nav-links">
-                    <a href="#home">Home</a>
-                    <a href="#features">Features</a>
-                    <a href="#about">About</a>
-                    <a href="#contact">Contact</a>
-                    <button onClick={handleSignOut} className="sign-out-button">
-                      Sign Out
-                    </button>
-                  </div>
-                </nav>
-              </header>
-              <main className="authenticated-main">
-                <h2>Welcome, {user?.username}!</h2>
-                {/* Add your authenticated app content here */}
-              </main>
-            </div>
-          )}
-        </Authenticator>
+        <Authenticator.Provider>
+          <Authenticator>
+            {({ signOut, user }) => (
+              <div className="authenticated-content">
+                <header className="header">
+                  <nav>
+                    <div className="logo">
+                      <h1>StockHistory.Ai</h1>
+                    </div>
+                    <div className="nav-links">
+                      <a href="#home">Home</a>
+                      <a href="#features">Features</a>
+                      <a href="#about">About</a>
+                      <a href="#contact">Contact</a>
+                      {/* Update the onClick handler */}
+                      <button 
+                        onClick={() => handleSignOut(signOut)} 
+                        className="sign-out-button"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  </nav>
+                </header>
+                <main className="authenticated-main">
+                  <h2>Welcome, {user?.username}!</h2>
+                </main>
+              </div>
+            )}
+          </Authenticator>
+        </Authenticator.Provider>
       ) : (
         <>
           <header className="header">
